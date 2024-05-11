@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:lotus/renkler.dart';
-import 'package:lotus/bilgialma.dart';
+import 'package:lotus/colors.dart';
+import 'package:lotus/user_info.dart';
 
-class Kayit extends StatefulWidget {
-  const Kayit({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<Kayit> createState() => _KayitState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _KayitState extends State<Kayit> {
+class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: anaPembe,
+      backgroundColor: mainPink,
+      appBar: AppBar(
+        backgroundColor: mainPink,
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Card(
@@ -21,7 +24,7 @@ class _KayitState extends State<Kayit> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
-            elevation: 20,
+
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -30,29 +33,29 @@ class _KayitState extends State<Kayit> {
                     "Kaydol",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: siyah,
+                      color: black,
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 20),
-                  _buildTextField(hint: "Ad"),
+                  _buildTextField(label: "Ad"),
                   const SizedBox(height: 20),
-                  _buildTextField(hint: "Soyad"),
+                  _buildTextField(label: "Soyad"),
                   const SizedBox(height: 20),
-                  _buildTextField(hint: "E-posta"),
+                  _buildTextField(label: "E-posta"),
                   const SizedBox(height: 20),
-                  _buildTextField(hint: "Şifre", isPassword: true),
+                  _buildTextField(label: "Şifre", isPassword: true),
                   const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const BilgiAlma()),
+                        MaterialPageRoute(builder: (context) => const UserInfo()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: anaPembe,
-                      foregroundColor: beyaz,
+                      backgroundColor: mainPink,
+                      foregroundColor: white,
                       minimumSize: const Size(double.infinity, 60),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -68,7 +71,7 @@ class _KayitState extends State<Kayit> {
                     child: Text(
                       "Hesabınız var mı? Giriş Yap",
                       style: TextStyle(
-                        color: siyah, // Adjust as needed
+                        color: black,
                         fontSize: 16,
                       ),
                     ),
@@ -82,16 +85,15 @@ class _KayitState extends State<Kayit> {
     );
   }
 
-  Widget _buildTextField({required String hint, bool isPassword = false}) {
+  Widget _buildTextField({required String label, bool isPassword = false}) {
     return TextField(
       obscureText: isPassword,
       decoration: InputDecoration(
-        hintText: hint,
-        fillColor: beyaz,
+        labelText: label,
+        fillColor: white,
         filled: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(30),
         ),
       ),
     );

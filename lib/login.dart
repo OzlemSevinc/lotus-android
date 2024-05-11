@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:lotus/renkler.dart';
-import 'package:lotus/kayit.dart';
-import 'package:lotus/sifremi_unuttum.dart';
+import 'package:lotus/bottom_nav_bar.dart';
+import 'package:lotus/colors.dart';
+import 'package:lotus/signup.dart';
+import 'package:lotus/forgot_password.dart';
 
-class Giris extends StatefulWidget {
-  const Giris({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<Giris> createState() => _GirisState();
+  State<Login> createState() => _LoginState();
 }
 
-class _GirisState extends State<Giris> {
+class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: anaPembe,
+      backgroundColor: mainPink,
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -27,7 +28,7 @@ class _GirisState extends State<Giris> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
-                elevation: 20,
+
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
@@ -36,7 +37,7 @@ class _GirisState extends State<Giris> {
                         "Giriş",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: siyah,
+                          color: black,
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
                         ),
@@ -45,11 +46,11 @@ class _GirisState extends State<Giris> {
                       TextField(
                         decoration: InputDecoration(
                           labelText: "E-posta",
-                          fillColor: beyaz,
+                          fillColor: white,
                           filled: true,
                           prefixIcon: const Icon(Icons.email),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                       ),
@@ -58,11 +59,11 @@ class _GirisState extends State<Giris> {
                         obscureText: true,
                         decoration: InputDecoration(
                           labelText: "Şifre",
-                          fillColor: beyaz,
+                          fillColor: white,
                           filled: true,
                           prefixIcon: const Icon(Icons.lock),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                       ),
@@ -72,13 +73,13 @@ class _GirisState extends State<Giris> {
                         child: TextButton(
                           onPressed: () {
                             Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => const SifremiUnuttum()),
+                            MaterialPageRoute(builder: (context) => const ForgotPassword()),
                             );
                           },
                           child: Text(
                             "Şifremi unuttum!",
                             style: TextStyle(
-                              color: siyah,
+                              color: black,
                               fontSize: 16,
                             ),
                           ),
@@ -86,13 +87,17 @@ class _GirisState extends State<Giris> {
                       ),
 
                       ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => const BottomNavigation()),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: anaPembe,
-                            foregroundColor: beyaz,
-                            minimumSize: const Size(double.infinity, 60),
+                            backgroundColor: mainPink,
+                            foregroundColor: white,
+                            minimumSize: const Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(30),
                             ),
                           ),
                           child: const Text("Giriş",
@@ -104,13 +109,13 @@ class _GirisState extends State<Giris> {
                       TextButton(
                           onPressed: () {
                             Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => const Kayit()),
+                                MaterialPageRoute(builder: (context) => const SignUp()),
                             );
                           },
                           child: Text(
                             "Hesabınız yok mu? Kaydol",
                             style: TextStyle(
-                              color: siyah,
+                              color: black,
                               fontSize: 16,
                             ),
                           )

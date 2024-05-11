@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:lotus/renkler.dart';
+import 'package:lotus/colors.dart';
 
-class SifremiUnuttum extends StatefulWidget {
-  const SifremiUnuttum({super.key});
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({super.key});
 
   @override
-  State<SifremiUnuttum> createState() => _SifremiUnuttumState();
+  State<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
-class _SifremiUnuttumState extends State<SifremiUnuttum> {
+class _ForgotPasswordState extends State<ForgotPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: anaPembe,
+      backgroundColor: mainPink,
+      appBar: AppBar(
+        backgroundColor: mainPink,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -24,7 +27,7 @@ class _SifremiUnuttumState extends State<SifremiUnuttum> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: siyah,
+                color: black,
               ),
             ),
             const SizedBox(height: 20),
@@ -40,7 +43,7 @@ class _SifremiUnuttumState extends State<SifremiUnuttum> {
                   'E-posta adresinizi girin. E-posta adresinize şifrenizi sıfırlamanız için bir bağlantı göndereceğiz.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: siyah,
+                    color: black,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -58,8 +61,8 @@ class _SifremiUnuttumState extends State<SifremiUnuttum> {
 
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: anaPembe,
-                        foregroundColor: beyaz,
+                        backgroundColor: mainPink,
+                        foregroundColor: white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
