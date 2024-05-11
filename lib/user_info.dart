@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:lotus/renkler.dart';
+import 'package:lotus/colors.dart';
+import 'homepage.dart';
 
-class BilgiAlma extends StatefulWidget {
-  const BilgiAlma({super.key});
+class UserInfo extends StatefulWidget {
+  const UserInfo({super.key});
 
   @override
-  State<BilgiAlma> createState() => _BilgiAlmaState();
+  State<UserInfo> createState() => _UserInfoState();
 }
 
-class _BilgiAlmaState extends State<BilgiAlma> {
+class _UserInfoState extends State<UserInfo> {
   String? selectedWeek;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: anaPembe,
+      backgroundColor: mainPink,
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -24,7 +25,7 @@ class _BilgiAlmaState extends State<BilgiAlma> {
                 "Hoşgeldiniz",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: siyah,
+                  color: black,
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
                 ),
@@ -63,7 +64,7 @@ class _BilgiAlmaState extends State<BilgiAlma> {
                        // isExpanded: false,
                         decoration: InputDecoration(
                           labelText: 'Hafta seçiniz',
-                          fillColor: beyaz,
+                          fillColor: white,
                           filled: true,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -86,11 +87,13 @@ class _BilgiAlmaState extends State<BilgiAlma> {
                       const SizedBox(height: 35),
                       ElevatedButton(
                         onPressed: () {
-
+                          Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => const Homepage()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: anaPembe,
-                          foregroundColor: beyaz,
+                          backgroundColor: mainPink,
+                          foregroundColor: white,
                           minimumSize: const Size(double.infinity, 60),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -111,7 +114,7 @@ class _BilgiAlmaState extends State<BilgiAlma> {
                         child: Text(
                           "Hamile değilim",
                           style: TextStyle(
-                            color: siyah,
+                            color: black,
                             fontSize: 16,
                           ),
                         ),
