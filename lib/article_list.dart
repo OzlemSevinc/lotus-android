@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lotus/colors.dart';
+import 'entity/article_entity.dart';
+
 class ArticleList extends StatefulWidget {
   const ArticleList({super.key});
 
@@ -8,42 +10,62 @@ class ArticleList extends StatefulWidget {
 }
 
 class _ArticleListState extends State<ArticleList> {
-  var articleList=["Makale1","Makale2","Makale3","Makale4","Makale5","Makale6","Makale7"];
+  List<Article> articleList = [
+    Article(title: "Makale1", content: "İçerik1", writer: "Yazar1", category: "Kategori1"),
+    Article(title: "Makale2", content: "İçerik2", writer: "Yazar2", category: "Kategori2"),
+    Article(title: "Makale3", content: "İçerik3", writer: "Yazar3", category: "Kategori3"),
+    Article(title: "Makale4", content: "İçerik4", writer: "Yazar4", category: "Kategori4"),
+    Article(title: "Makale5", content: "İçerik5", writer: "Yazar5", category: "Kategori5"),
+    Article(title: "Makale6", content: "İçerik6", writer: "Yazar6", category: "Kategori6"),
+    Article(title: "Makale7", content: "İçerik7", writer: "Yazar7", category: "Kategori7"),
+    Article(title: "Makale8", content: "İçerik8", writer: "Yazar8", category: "Kategori8"),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mainPink,
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body:  Column(
           children: <Widget>[
             _searchBar(context),
-            _buildHorizontalListView(context,resim: "resimler/lotus_resim.png", items: articleList)
+            Expanded(
+              child:_buildHorizontalListView(context,resim: "resimler/lotus_resim.png", items: articleList)
+            ),
           ],
         ),
-      ),
     );
   }
 }
 
-Widget _buildHorizontalListView(BuildContext context,{ required String resim, required List<String> items}) {
-  return SizedBox(
-    height: MediaQuery.of(context).size.height,
-    child: ListView.builder(
+Widget _buildHorizontalListView(BuildContext context,{ required String resim, required List<Article> items}) {
+  return  ListView.builder(
         scrollDirection: Axis.vertical,
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) {
+          final article = items[index];
           return Card(
               child: Row(
                 children: [
                   SizedBox(width:150,height:150,child: Image.asset(resim),),
-                  Text(items[index]),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(article.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          Text("Yazar: ${article.writer}", style: TextStyle(fontSize: 16)),
+                          Text("Kategori: ${article.category}", style: TextStyle(fontSize: 16)),
+                          Text(article.content, style: TextStyle(fontSize: 14), maxLines: 2, overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               )
           );
         }
-    ),
   );
 }
 

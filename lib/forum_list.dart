@@ -17,22 +17,20 @@ class _ForumListState extends State<ForumList> {
       appBar: AppBar(
         backgroundColor: mainPink,
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body:  Column(
           children: <Widget>[
             _searchBar(context),
-            _buildHorizontalListView(context,resim: "resimler/lotus_resim.png", items: questionList)
+            Expanded(
+            child: _buildHorizontalListView(context,resim: "resimler/lotus_resim.png", items: questionList)
+            ),
           ],
         ),
-      ),
     );
   }
 }
 
 Widget _buildHorizontalListView(BuildContext context,{ required String resim, required List<String> items}) {
-  return SizedBox(
-    height: MediaQuery.of(context).size.height*0.93,
-    child: ListView.builder(
+  return ListView.builder(
         scrollDirection: Axis.vertical,
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) {
@@ -45,8 +43,7 @@ Widget _buildHorizontalListView(BuildContext context,{ required String resim, re
               )
           );
         }
-    ),
-  );
+    );
 }
 Widget _searchBar(BuildContext context){
   return Padding(
