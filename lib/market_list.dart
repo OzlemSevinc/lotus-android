@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lotus/add_product.dart';
 import 'package:lotus/colors.dart';
 import 'article_list.dart';
 import 'entity/product_entity.dart';
@@ -26,6 +27,7 @@ class _MarketListState extends State<MarketList> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mainPink,
+        scrolledUnderElevation: 0.0,
       ),
       body: Column(
           children: <Widget>[
@@ -35,6 +37,15 @@ class _MarketListState extends State<MarketList> {
             ),
           ],
         ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const AddProduct()));
+        },
+
+        backgroundColor: green,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
@@ -54,10 +65,10 @@ Widget _buildHorizontalListView(BuildContext context,{ required String resim, re
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text("Açıklama: ${product.definition}", style: TextStyle(fontSize: 16)),
-                          Text("Kategori: ${product.category}", style: TextStyle(fontSize: 16)),
-                          Text("Fiyat: ${product.price}", style: TextStyle(fontSize: 14), maxLines: 2, overflow: TextOverflow.ellipsis),
+                          Text(product.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          Text("Açıklama: ${product.definition}", style: const TextStyle(fontSize: 16)),
+                          Text("Kategori: ${product.category}", style: const TextStyle(fontSize: 16)),
+                          Text("Fiyat: ${product.price}", style: const TextStyle(fontSize: 14), maxLines: 2, overflow: TextOverflow.ellipsis),
                         ],
                       ),
                     ),
@@ -71,8 +82,9 @@ Widget _buildHorizontalListView(BuildContext context,{ required String resim, re
 
 
 Widget _searchBar(BuildContext context){
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
+  return Container(
+    color: mainPink,
+    padding: const EdgeInsets.only(bottom: 8.0,left: 8.0,right: 8.0),
     child: SearchAnchor(
         builder: (BuildContext context, SearchController controller) {
           return SearchBar(

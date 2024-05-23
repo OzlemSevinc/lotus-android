@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lotus/article_list.dart';
 import 'package:lotus/colors.dart';
+import 'package:lotus/doctor_list.dart';
+import 'package:lotus/podcast_list.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -61,9 +63,9 @@ class _HomepageState extends State<Homepage> {
               const SizedBox(height:20,),
               _buildTextandTextButton(context,title: "Makale",textButton: "Tümünü Gör",destination: (context) => const ArticleList()),
               _buildHorizontalListView(resim:"resimler/lotus_resim.png",items: articleList),
-              _buildTextandTextButton(context,title: "Podcast",textButton: "Tümünü Gör",destination: (context) => const ArticleList()),
+              _buildTextandTextButton(context,title: "Podcast",textButton: "Tümünü Gör",destination: (context) => const PodcastList()),
               _buildHorizontalListView(resim:"resimler/lotus_resim.png",items: podcastList),
-              _buildTextandTextButton(context,title: "Doktorlar",textButton: "Tümünü Gör",destination: (context) => const ArticleList()),
+              _buildTextandTextButton(context,title: "Doktorlar",textButton: "Tümünü Gör",destination: (context) => const DoctorList()),
               _buildHorizontalListView(resim:"resimler/lotus_resim.png",items: doctorList),
             ],
           ),
@@ -95,6 +97,7 @@ Widget _buildHorizontalListView({ required String resim, required List<String> i
 
 Widget _buildTextandTextButton(BuildContext context,{required String title, required String textButton,required WidgetBuilder destination}) {
   return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: <Widget>[
       Padding(
         padding: const EdgeInsets.only(left: 8.0),
@@ -102,19 +105,20 @@ Widget _buildTextandTextButton(BuildContext context,{required String title, requ
           title,
           textAlign: TextAlign.left,
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: 24,
           ),
         ),
       ),
+      Spacer(),
       Padding(
-        padding: const EdgeInsets.only(left: 200),
+        padding: const EdgeInsets.only(right: 8.0),
         child: TextButton(onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(builder: destination),
           );
         },
             child: Text(textButton, textAlign: TextAlign.right,
-              style: const TextStyle(decoration: TextDecoration.underline),)),
+              style: TextStyle(fontSize:16,color: coal,decoration: TextDecoration.underline),)),
       )
     ],
   );

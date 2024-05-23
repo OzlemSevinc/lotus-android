@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
                   child: Column(
                     children:<Widget> [
                       Text(
-                        "Giriş",
+                        "Giriş Yap",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: black,
