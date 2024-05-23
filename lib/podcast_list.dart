@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'colors.dart';
 
-class DoctorList extends StatefulWidget {
-  const DoctorList({super.key});
+class PodcastList extends StatefulWidget {
+  const PodcastList({super.key});
 
   @override
-  State<DoctorList> createState() => _DoctorListState();
+  State<PodcastList> createState() => _PodcastListState();
 }
 
-class _DoctorListState extends State<DoctorList> {
-  var doctorList=["Doktor1","Doktor2","Doktor3","Doktor4","Doktor5","Doktor6","Doktor7"];
+class _PodcastListState extends State<PodcastList> {
+  var podcastList=["Podcast1","Podcast2","Podcast3","Podcast4","Podcast5","Podcast6","Podcast7"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +21,7 @@ class _DoctorListState extends State<DoctorList> {
         children: <Widget>[
           _searchBar(context),
           Expanded(
-              child:_buildHorizontalListView(context,resim: "resimler/lotus_resim.png", items: doctorList)
+              child:_buildHorizontalListView(context,resim: "resimler/lotus_resim.png", items: podcastList)
           ),
         ],
       ),
@@ -33,7 +33,7 @@ Widget _buildHorizontalListView(BuildContext context,{ required String resim, re
       scrollDirection: Axis.vertical,
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
-        final doctor = items[index];
+        final podcast = items[index];
         return Card(
             child: Row(
               children: [
@@ -44,7 +44,7 @@ Widget _buildHorizontalListView(BuildContext context,{ required String resim, re
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(doctor, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text(podcast, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),

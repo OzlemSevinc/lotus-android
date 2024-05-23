@@ -16,6 +16,7 @@ class _ForumListState extends State<ForumList> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mainPink,
+        scrolledUnderElevation: 0.0,
       ),
       body:  Column(
           children: <Widget>[
@@ -46,8 +47,9 @@ Widget _buildHorizontalListView(BuildContext context,{ required String resim, re
     );
 }
 Widget _searchBar(BuildContext context){
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
+  return Container(
+    color: mainPink,
+    padding: const EdgeInsets.only(bottom: 8.0,left: 8.0,right: 8.0),
     child: SearchAnchor(
         builder: (BuildContext context, SearchController controller) {
           return SearchBar(

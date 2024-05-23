@@ -25,6 +25,7 @@ class _ArticleListState extends State<ArticleList> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mainPink,
+        scrolledUnderElevation: 0.0,
       ),
       body:  Column(
           children: <Widget>[
@@ -73,8 +74,9 @@ void setState(String item,SearchController controller) {
   controller.closeView(item);
 }
 Widget _searchBar(BuildContext context){
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
+  return Container(
+    color: mainPink,
+    padding: const EdgeInsets.only(bottom: 8.0,left: 8.0,right: 8.0),
     child: SearchAnchor(
         builder: (BuildContext context, SearchController controller) {
           return SearchBar(
