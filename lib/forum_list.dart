@@ -26,6 +26,13 @@ class _ForumListState extends State<ForumList> {
             ),
           ],
         ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+        },
+
+        backgroundColor: green,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
