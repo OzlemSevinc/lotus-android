@@ -1,7 +1,7 @@
 class Product{
   String name;
   String definition;
-  int ownerId;
+  String ownerId;
   double price;
   String category;
 

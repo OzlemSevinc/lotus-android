@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lotus/article_page.dart';
 import 'package:lotus/colors.dart';
 import 'entity/article_entity.dart';
 
@@ -11,7 +12,7 @@ class ArticleList extends StatefulWidget {
 
 class _ArticleListState extends State<ArticleList> {
   List<Article> articleList = [
-    Article(title: "Makale1", content: "İçerik1", writer: "Yazar1", category: "Kategori1"),
+    Article(title: "Makale1", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer feugiat diam sed posuere viverra. Phasellus accumsan lacus a nulla luctus hendrerit sit amet quis purus. Vivamus maximus purus vel velit fermentum, eget pretium nisi ultrices. Nullam convallis volutpat lectus. Nullam dapibus tortor aliquet nisi rhoncus, ac tincidunt ex volutpat. Cras efficitur libero et iaculis dictum. Nulla sed ullamcorper ligula, ut vestibulum nisl.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer feugiat diam sed posuere viverra. Phasellus accumsan lacus a nulla luctus hendrerit sit amet quis purus. Vivamus maximus purus vel velit fermentum, eget pretium nisi ultrices. Nullam convallis volutpat lectus. Nullam dapibus tortor aliquet nisi rhoncus, ac tincidunt ex volutpat. Cras efficitur libero et iaculis dictum. Nulla sed ullamcorper ligula, ut vestibulum nisl.", writer: "Yazar1", category: "Kategori1"),
     Article(title: "Makale2", content: "İçerik2", writer: "Yazar2", category: "Kategori2"),
     Article(title: "Makale3", content: "İçerik3", writer: "Yazar3", category: "Kategori3"),
     Article(title: "Makale4", content: "İçerik4", writer: "Yazar4", category: "Kategori4"),
@@ -45,26 +46,34 @@ Widget _buildHorizontalListView(BuildContext context,{ required String resim, re
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) {
           final article = items[index];
-          return Card(
-              child: Row(
-                children: [
-                  SizedBox(width:150,height:150,child: Image.asset(resim),),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(article.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text("Yazar: ${article.writer}", style: TextStyle(fontSize: 16)),
-                          Text("Kategori: ${article.category}", style: TextStyle(fontSize: 16)),
-                          Text(article.content, style: TextStyle(fontSize: 14), maxLines: 2, overflow: TextOverflow.ellipsis),
-                        ],
+          return GestureDetector(
+            onTap: (){
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context)=>ArticlePage(article: article),
+                ),
+              );
+            },
+            child: Card(
+                child: Row(
+                  children: [
+                    SizedBox(width:150,height:150,child: Image.asset(resim),),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(article.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            Text("Yazar: ${article.writer}", style: TextStyle(fontSize: 16)),
+                            Text("Kategori: ${article.category}", style: TextStyle(fontSize: 16)),
+                            Text(article.content, style: TextStyle(fontSize: 14), maxLines: 2, overflow: TextOverflow.ellipsis),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
+                  ],
+                )
+            ),
           );
         }
   );

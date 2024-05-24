@@ -4,6 +4,8 @@ import 'package:lotus/colors.dart';
 import 'package:lotus/doctor_list.dart';
 import 'package:lotus/podcast_list.dart';
 
+import 'entity/user_entity.dart';
+
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
 
@@ -12,8 +14,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  String userName="Jane";
-  String selectedWeek="0";
+  User currentUser = User(name:"Jane",surname: "Doe",pregnancyStatus: "12",userId: "1");
   var articleList=["Makale1","Makale2","Makale3","Makale4","Makale5","Makale6","Makale7"];
   var podcastList=["Podcast1","Podcast2","Podcast3","Podcast4","Podcast5","Podcast6","Podcast7"];
   var doctorList=["Doktor1","Doktor2","Doktor3","Doktor4","Doktor5","Doktor6","Doktor7"];
@@ -36,7 +37,7 @@ class _HomepageState extends State<Homepage> {
                 alignment: Alignment.centerLeft,
                 margin: const EdgeInsets.only(left: 20),
                 child: Text(
-                  "Merhaba, $userName",
+                  "Merhaba,${currentUser.name}",
                   style: const TextStyle(
                     fontSize: 30,
                     fontFamily: 'Roboto Mono',
@@ -48,7 +49,7 @@ class _HomepageState extends State<Homepage> {
                 alignment: Alignment.centerLeft,
                 margin: const EdgeInsets.only(left: 10),
                 child: Text(
-                  "Bebeğiniz şu anda $selectedWeek haftalık yaklaşık "
+                  "Bebeğiniz şu anda ${currentUser.pregnancyStatus} haftalık yaklaşık "
                       "olarak bu şekilde görünüyor",
 
                   style: const TextStyle(
