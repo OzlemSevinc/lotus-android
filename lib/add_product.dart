@@ -19,14 +19,54 @@ class _AddProductState extends State<AddProduct> {
   String? selectedCategory;
   final List<String> categories = ["Giyim ve Tekstil","Banyo ve Bakım","Bebek Odası","Oyuncak ve Kitap","Araç ve Gereç","Diğer"];
 
-  Future<void> pickImages()async{
+  Future<void> pickImages(ImageSource source)async{
+    if(source == ImageSource.gallery){
     final pickedImages=await ImagePicker().pickMultiImage();
 
     if(pickedImages != null){
       setState(() {
-        images=pickedImages.map((pickedImage) => File(pickedImage.path)).toList();
+        images.addAll(pickedImages.map((pickedImage) => File(pickedImage.path)).toList());
       });
     }
+    }else{
+      final imageTaken = await ImagePicker().pickImage(source: source);
+
+      if(imageTaken != null){
+        setState(() {
+          images.add(File(imageTaken.path));
+        });
+      }
+    }
+  }
+
+  void imageSourceBottomSheet(BuildContext context){
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context){
+          return SafeArea(
+              child: Wrap(
+                children: <Widget>[
+                  ListTile(
+                    leading: const Icon(Icons.photo_library),
+                    title: const Text("Galeri"),
+                    onTap: (){
+                      Navigator.of(context).pop();
+                      pickImages(ImageSource.gallery);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.camera_alt),
+                    title: const Text("Kamera"),
+                    onTap: (){
+                      Navigator.of(context).pop();
+                      pickImages(ImageSource.camera);
+                    },
+                  )
+                ],
+              ),
+          );
+        },
+        );
   }
 
   void saveProduct(){
@@ -51,7 +91,7 @@ class _AddProductState extends State<AddProduct> {
             ),
             const SizedBox(height: 8),
             GestureDetector(
-              onTap: pickImages,
+              onTap: ()=>imageSourceBottomSheet(context),
               child: Container(
                 height: 100,
                 width: 100,
@@ -123,7 +163,7 @@ class _AddProductState extends State<AddProduct> {
               ),
             ),
             const SizedBox(height: 16),
-            Container(
+            SizedBox(
               height: 150,
               child: TextField(
                 controller: definitionController,

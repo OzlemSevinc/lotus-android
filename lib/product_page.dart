@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'entity/article_entity.dart';
 import 'package:lotus/colors.dart';
-class ArticlePage extends StatelessWidget {
-  final Article article;
+import 'package:lotus/entity/product_entity.dart';
 
-  const ArticlePage({super.key, required this.article});
+class ProductPage extends StatelessWidget {
+  final Product product;
+
+  const ProductPage({super.key, required this.product});
 
 
   @override
@@ -13,7 +14,6 @@ class ArticlePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: mainPink,
         scrolledUnderElevation: 0.0,
-        title: Text(article.title),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -23,22 +23,22 @@ class ArticlePage extends StatelessWidget {
             Image.asset("resimler/lotus_resim.png"),
             const SizedBox(height: 16.0),
             Text(
-              article.title,
+              product.name,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8.0),
             Text(
-              "Yazar: ${article.writer}",
+              "Satıcı: ${product.ownerId}",
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 8.0),
             Text(
-              "Kategori: ${article.category}",
+              "Fiyat: ${product.price} ₺",
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16.0),
             Text(
-              article.content,
+              product.definition,
               style: const TextStyle(fontSize: 14),
             ),
           ],
