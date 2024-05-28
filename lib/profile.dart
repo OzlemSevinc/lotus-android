@@ -15,14 +15,44 @@ class _ProfileState extends State<Profile> {
   File? image;
   User user = User(name:"Jane",surname: "Doe",pregnancyStatus: "12",userId: "1");
 
-  Future<void> pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future<void> pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
 
     if (pickedFile != null) {
       setState(() {
         image = File(pickedFile.path);
       });
     }
+  }
+
+  void imageSourceBottomSheet(BuildContext context){
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context){
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text("Galeri"),
+                onTap: (){
+                  Navigator.of(context).pop();
+                  pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Kamera"),
+                onTap: (){
+                  Navigator.of(context).pop();
+                  pickImage(ImageSource.camera);
+                },
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -63,7 +93,7 @@ class _ProfileState extends State<Profile> {
                       bottom: 0,
                       right: 0,
                       child: GestureDetector(
-                        onTap: pickImage,
+                        onTap: ()=>imageSourceBottomSheet(context),
                         child: CircleAvatar(
                           radius: 25,
                           backgroundColor: green,
