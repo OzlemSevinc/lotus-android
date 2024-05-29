@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lotus/entity/podcast_entity.dart';
+import 'package:lotus/podcast_page.dart';
 import 'colors.dart';
 
 class PodcastList extends StatefulWidget {
@@ -9,7 +11,11 @@ class PodcastList extends StatefulWidget {
 }
 
 class _PodcastListState extends State<PodcastList> {
-  var podcastList=["Podcast1","Podcast2","Podcast3","Podcast4","Podcast5","Podcast6","Podcast7"];
+  var podcastList=[Podcast(id: 4, title: "Moonlight", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas malesuada, purus aliquam hendrerit mollis, ipsum diam posuere erat, egestas venenatis sapien ipsum nec turpis. In vestibulum ex elit, vitae ultrices turpis dignissim in. Vestibulum sed lacus scelerisque, pulvinar purus quis, accumsan lacus.", url: "https://lotuspodcast.blob.core.windows.net/podcast/scott-buckley-moonlight%28chosic.com%29.mp3", image: "resimler/lotus_resim.png"),
+    Podcast(id: 55, title: "Bebek Bakımı Nasıl Olur?", description: "description", url: "url", image: "image"),
+    Podcast(id: 55, title: "Bebek Bakımı Nasıl Olur?", description: "description", url: "url", image: "image"),
+    Podcast(id: 55, title: "Bebek Bakımı Nasıl Olur?", description: "description", url: "url", image: "image"),
+    Podcast(id: 55, title: "Bebek Bakımı Nasıl Olur?", description: "description", url: "url", image: "image")];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,29 +34,40 @@ class _PodcastListState extends State<PodcastList> {
     );
   }
 }
-Widget _buildHorizontalListView(BuildContext context,{ required String resim, required List<String> items}) {
+Widget _buildHorizontalListView(BuildContext context,{ required String resim, required List<Podcast> items}) {
   return  ListView.builder(
       scrollDirection: Axis.vertical,
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
         final podcast = items[index];
-        return Card(
-            child: Row(
-              children: [
-                SizedBox(width:150,height:150,child: Image.asset(resim),),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(podcast, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      ],
+        return GestureDetector(
+          onTap: (){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context)=>PodcastPage(podcast:podcast),
+                ),
+            );
+          },
+          child: Card(
+              child: Row(
+                children: [
+                  SizedBox(width:150,height:150,child: Image.asset(resim),),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(podcast.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          Text(podcast.description,style: TextStyle(fontSize: 16), maxLines: 3, overflow: TextOverflow.ellipsis)
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )
+                ],
+              )
+          ),
         );
       }
   );
