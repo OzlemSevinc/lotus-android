@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lotus/colors.dart';
-import 'package:lotus/user_info.dart';
+import 'package:lotus/service/registration_service.dart';
+import 'login.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -10,12 +11,45 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController surnameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final RegistrationService apiService = RegistrationService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
+
+  Future<void> registration() async {
+    try {
+      await apiService.registration(
+        email: emailController.text,
+        userName: nameController.text,
+        surname: surnameController.text,
+        password: passwordController.text,
+      );
+
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Kayıt başarılı.E-posta adresinize onay maili gönderildi')),
+      );
+
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const Login()),
+      );
+
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Kayıt Başarısız: $e')),
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: mainPink,
       appBar: AppBar(
         backgroundColor: mainPink,
+        scrolledUnderElevation: 0.0,
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -39,20 +73,16 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  _buildTextField(label: "Ad"),
+                  _buildTextField(label: "Ad",controller: nameController),
                   const SizedBox(height: 20),
-                  _buildTextField(label: "Soyad"),
+                  _buildTextField(label: "Soyad",controller: surnameController),
                   const SizedBox(height: 20),
-                  _buildTextField(label: "E-posta"),
+                  _buildTextField(label: "E-posta",controller: emailController),
                   const SizedBox(height: 20),
-                  _buildTextField(label: "Şifre", isPassword: true),
+                  _buildTextField(label: "Şifre",controller: passwordController, isPassword: true),
                   const SizedBox(height: 30),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const UserInfo()),
-                      );
-                    },
+                    onPressed: registration,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: mainPink,
                       foregroundColor: white,
@@ -85,8 +115,9 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Widget _buildTextField({required String label, bool isPassword = false}) {
+  Widget _buildTextField({required String label,required TextEditingController controller, bool isPassword = false}) {
     return TextField(
+      controller: controller,
       obscureText: isPassword,
       decoration: InputDecoration(
         labelText: label,

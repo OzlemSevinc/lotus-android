@@ -14,7 +14,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  User currentUser = User(name:"Jane",surname: "Doe",pregnancyStatus: "12",userId: "1");
+  User currentUser = User(name:"Jane",surname: "Doe",email:null,password: null,pregnancyStatus: "12",userId: "1",accessToken: null,refreshToken: null);
   var articleList=["Makale1","Makale2","Makale3","Makale4","Makale5","Makale6","Makale7"];
   var podcastList=["Podcast1","Podcast2","Podcast3","Podcast4","Podcast5","Podcast6","Podcast7"];
   var doctorList=["Doktor1","Doktor2","Doktor3","Doktor4","Doktor5","Doktor6","Doktor7"];
