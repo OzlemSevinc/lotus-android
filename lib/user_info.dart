@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lotus/colors.dart';
+import 'package:lotus/service/user_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'bottom_nav_bar.dart';
 import 'homepage.dart';
 
 class UserInfo extends StatefulWidget {
@@ -11,6 +14,34 @@ class UserInfo extends StatefulWidget {
 
 class _UserInfoState extends State<UserInfo> {
   String? selectedWeek;
+
+  final UserService userService = UserService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
+
+  Future<void> updatePregnancyStatus() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId');
+      if (userId != null && selectedWeek != null) {
+        final userDetails = await userService.getUserById(userId);
+        await userService.updateUser(
+          userId: userId,
+          userName: userDetails['userName'],
+          surname: userDetails['surname'],
+          pregnancyStatus: selectedWeek!,
+          email: userDetails['email'],
+        );
+        
+        Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const BottomNavigation()),
+        );
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Güncelleme yapılamadı: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,11 +117,7 @@ class _UserInfoState extends State<UserInfo> {
                       ),
                       const SizedBox(height: 35),
                       ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => const Homepage()),
-                          );
-                        },
+                        onPressed: updatePregnancyStatus,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: mainPink,
                           foregroundColor: white,

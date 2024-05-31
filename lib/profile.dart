@@ -13,7 +13,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   File? image;
-  User user = User(name:"Jane",surname: "Doe",pregnancyStatus: "12",userId: "1");
+  User user = User(name:"Jane",surname: "Doe",email:null,password: null,pregnancyStatus: "12",userId: "1",accessToken: null,refreshToken: null);
 
   Future<void> pickImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);

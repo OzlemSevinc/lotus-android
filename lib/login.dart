@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:lotus/bottom_nav_bar.dart';
 import 'package:lotus/colors.dart';
+import 'package:lotus/service/login_service.dart';
+import 'package:lotus/service/user_service.dart';
 import 'package:lotus/signup.dart';
 import 'package:lotus/forgot_password.dart';
+import 'package:lotus/user_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,6 +16,43 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final LoginService loginService = LoginService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
+  final UserService userService = UserService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
+
+  Future<void> login() async {
+    try {
+      await loginService.login(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      final userId = prefs.getString('userId');
+
+      if(userId != null){
+        final userDetails = await userService.getUserById(userId);
+        print(userDetails['pregnancyStatus']);
+        if(userDetails['pregnancyStatus']==null){
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const UserInfo()),
+          );
+        }else{
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const BottomNavigation()),
+          );
+        }
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Giriş yapılamadı: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,6 +85,7 @@ class _LoginState extends State<Login> {
                       ),
                       const SizedBox(height: 40),
                       TextField(
+                        controller: emailController,
                         decoration: InputDecoration(
                           labelText: "E-posta",
                           fillColor: white,
@@ -56,6 +98,7 @@ class _LoginState extends State<Login> {
                       ),
                       const SizedBox(height: 20),
                       TextField(
+                        controller: passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
                           labelText: "Şifre",
@@ -87,11 +130,7 @@ class _LoginState extends State<Login> {
                       ),
 
                       ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => const BottomNavigation()),
-                            );
-                          },
+                          onPressed: login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: mainPink,
                             foregroundColor: white,
