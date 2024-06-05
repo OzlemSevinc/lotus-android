@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lotus/entity/podcast_entity.dart';
 import 'package:lotus/podcast_page.dart';
+import 'package:lotus/service/podcast_service.dart';
 import 'colors.dart';
 
 class PodcastList extends StatefulWidget {
@@ -11,33 +12,74 @@ class PodcastList extends StatefulWidget {
 }
 
 class _PodcastListState extends State<PodcastList> {
-  var podcastList = [
-    Podcast(id: 4,
-        title: "Moonlight",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas malesuada, purus aliquam hendrerit mollis, ipsum diam posuere erat, egestas venenatis sapien ipsum nec turpis. In vestibulum ex elit, vitae ultrices turpis dignissim in. Vestibulum sed lacus scelerisque, pulvinar purus quis, accumsan lacus.",
-        url: "https://lotuspodcast.blob.core.windows.net/podcast/scott-buckley-moonlight%28chosic.com%29.mp3",
-        image: "resimler/lotus_resim.png"),
-    Podcast(id: 55,
-        title: "Bebek Bakımı Nasıl Olur?",
-        description: "description",
-        url: "url",
-        image: "image"),
-    Podcast(id: 55,
-        title: "Bebek Bakımı Nasıl Olur?",
-        description: "description",
-        url: "url",
-        image: "image"),
-    Podcast(id: 55,
-        title: "Bebek Bakımı Nasıl Olur?",
-        description: "description",
-        url: "url",
-        image: "image"),
-    Podcast(id: 55,
-        title: "Bebek Bakımı Nasıl Olur?",
-        description: "description",
-        url: "url",
-        image: "image")
-  ];
+  List<Podcast> podcastList = [];
+  final PodcastService podcastService = PodcastService(baseUrl: 'https://lotusproject.azurewebsites.net/api');
+  bool isLoading = true;
+
+  String? searchQuery;
+  int? selectedCategoryId;
+  bool? sortByAlphabetical;
+  bool? sortByAlphabeticalDescending;
+  bool? sortByDate;
+  bool? sortByDateAscending;
+  int? pageNumber;
+  int? pageSize;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchandFilterPodcast();
+  }
+
+  Future<void> fetchandFilterPodcast() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final filteredPodcasts = await podcastService.fetchandFilterPodcasts(
+        categoryId: selectedCategoryId,
+        sortByAlphabetical: sortByAlphabetical,
+        sortByAlphabeticalDescending: sortByAlphabeticalDescending,
+        sortByDate: sortByDate,
+        sortByDateAscending: sortByDateAscending,
+        pageNumber: pageNumber ,
+        pageSize:pageSize ,
+      );
+      setState(() {
+        podcastList = filteredPodcasts;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Filtreleme başarısız: $e')),
+      );
+    }
+  }
+
+  Future<void> searchArticles() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final searchedPodcasts = await podcastService.searchPodcasts(searchQuery ?? '');
+      setState(() {
+        podcastList = searchedPodcasts;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Arama başarısız: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +91,9 @@ class _PodcastListState extends State<PodcastList> {
       body: Column(
         children: <Widget>[
           _searchBar(context),
-          Expanded(
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              :Expanded(
               child: _buildHorizontalListView(
                   context, resim: "resimler/lotus_resim.png",
                   items: podcastList)
@@ -78,8 +122,18 @@ class _PodcastListState extends State<PodcastList> {
             child: Card(
                 child: Row(
                   children: [
-                    SizedBox(
-                      width: 150, height: 150, child: Image.asset(resim),),
+                ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+              child: Image.network(
+                podcast.image ?? '',
+                width: 150,
+                height: 150,
+                fit: BoxFit.cover,
+                errorBuilder: (context,error,stackTrace){
+                  return Image.asset(resim, width: 150,height: 150, fit: BoxFit.cover);
+                },
+              ),
+            ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
