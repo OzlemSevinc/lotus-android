@@ -20,7 +20,21 @@ class ArticlePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset("resimler/lotus_resim.png"),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: Image.network(
+                  article.image ?? '',
+                  width: 300,
+                  height: 300,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context,error,stackTrace){
+                    return Image.asset("resimler/lotus_resim.png", width: 300,height: 300, fit: BoxFit.cover);
+                  },
+                ),
+              ),
+            ),
             const SizedBox(height: 16.0),
             Text(
               article.title,
@@ -33,10 +47,9 @@ class ArticlePage extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              "Kategori: ${article.category}",
+              "Yayınlanma Tarihi: ${article.date}",
               style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 16.0),
             Text(
               article.content,
               style: const TextStyle(fontSize: 14),

@@ -137,6 +137,7 @@ class _PodcastPageState extends State<PodcastPage> {
               IconButton(
                 icon: Icon(isLooping ? Icons.loop : Icons.loop_outlined),
                 iconSize: 36,
+                color: isLooping ? mainPink : black,
                 onPressed: toggleLoop,
               ),
             ],

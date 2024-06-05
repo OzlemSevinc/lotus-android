@@ -34,7 +34,6 @@ class _LoginState extends State<Login> {
 
       if(userId != null){
         final userDetails = await userService.getUserById(userId);
-        print(userDetails['pregnancyStatus']);
         if(userDetails['pregnancyStatus']==null){
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const UserInfo()),
