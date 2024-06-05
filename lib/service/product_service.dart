@@ -22,7 +22,7 @@ class ProductService {
       final data = jsonDecode(response.body);
       return data['productDtos'];
     } else {
-      throw Exception('Failed to load products');
+      throw Exception('Ürünler yüklenemedi');
     }
   }
 }

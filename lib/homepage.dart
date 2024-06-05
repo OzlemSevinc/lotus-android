@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-//import 'package:lotus/article_list.dart';
 import 'package:lotus/colors.dart';
+import 'package:lotus/entity/article_entity.dart';
+import 'package:lotus/podcast_page.dart';
 import 'package:lotus/service/article_service.dart';
 import 'package:lotus/service/podcast_service.dart';
-//import 'package:lotus/doctor_list.dart';
-//import 'package:lotus/podcast_list.dart';
 import 'package:lotus/service/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'article_list.dart';
+import 'article_page.dart';
 import 'doctor_list.dart';
+import 'entity/podcast_entity.dart';
 import 'entity/user_entity.dart';
 import 'podcast_list.dart';
 
@@ -21,8 +22,8 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   User currentUser=User(name:"null",surname: "null",email:null,pregnancyStatus: null,userId: null,fetusPicture: null);
-  List<dynamic> articles = [];
-  List<dynamic> podcasts = [];
+  List<Article> articles = [];
+  List<Podcast> podcasts = [];
   //var articleList=["Makale1","Makale2","Makale3","Makale4","Makale5","Makale6","Makale7"];
   //var podcastList=["Podcast1","Podcast2","Podcast3","Podcast4","Podcast5","Podcast6","Podcast7"];
   var doctorList=["Doktor1","Doktor2","Doktor3","Doktor4","Doktor5","Doktor6","Doktor7"];
@@ -77,11 +78,11 @@ class _HomepageState extends State<Homepage> {
 
   Future<void> fetchArticles() async {
     try {
-      final fetchedArticles = await articleService.fetchArticles(pageNumber: 0, pageSize: 5);
+      final fetchedArticles = await articleService.fetchandFilterArticles(pageNumber: 0, pageSize: 5);
       setState(() {
         articles = fetchedArticles;
       });
-      print(articles[0]['image']);
+      print(articles.first);
     } catch (e) {
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -91,7 +92,7 @@ class _HomepageState extends State<Homepage> {
   }
   Future<void> fetchPodcasts() async {
     try {
-      final fetchedPodcasts = await podcastService.fetchPodcasts();
+      final fetchedPodcasts = await podcastService.fetchandFilterPodcasts(pageNumber: 0,pageSize: 5);
       setState(() {
         podcasts = fetchedPodcasts;
       });
@@ -150,7 +151,7 @@ class _HomepageState extends State<Homepage> {
                 width: 300,
                 height: 300,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+                  borderRadius: BorderRadius.circular(20),
                   child: currentUser.fetusPicture != null && currentUser.fetusPicture!.isNotEmpty
                       ? Image.network(currentUser.fetusPicture!, fit: BoxFit.cover)
                       : Image.asset('resimler/lotus_resim.png', fit: BoxFit.cover),
@@ -158,11 +159,11 @@ class _HomepageState extends State<Homepage> {
               ),
               const SizedBox(height:20,),
                 _buildTextandTextButton(context,title: "Makale",textButton: "Tümünü Gör",destination: (context) => const ArticleList()),
-                _buildHorizontalListView(articles),
+                _buildHorizontalListView<Article>(articles),
                 _buildTextandTextButton(context,title: "Podcast",textButton: "Tümünü Gör",destination: (context) => const PodcastList()),
-                _buildHorizontalListView(podcasts),
+                _buildHorizontalListView<Podcast>(podcasts),
                 _buildTextandTextButton(context,title: "Doktorlar",textButton: "Tümünü Gör",destination: (context) => const DoctorList()),
-                _buildHorizontalListView(articles),
+                _buildHorizontalListView<Article>(articles),
             ],
           ),
         ),
@@ -171,7 +172,7 @@ class _HomepageState extends State<Homepage> {
   }
 
 
-Widget _buildHorizontalListView(List<dynamic>items) {
+Widget _buildHorizontalListView<T>(List<T>items) {
   return SizedBox(
     height: 220,
     child: ListView.builder(
@@ -179,23 +180,49 @@ Widget _buildHorizontalListView(List<dynamic>items) {
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) {
           final item = items[index];
-          return Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(width: 150,height: 150,child:  item['image'] != null && item['image'].isNotEmpty
-                      ? Image.network(
-                    item['image'],
-                    fit: BoxFit.cover,
-                  )
-                      : Image.asset('resimler/lotus_resim.png'),
+          return GestureDetector(
+            onTap: (){
+              if (item is Article){
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ArticlePage(article: item),
                   ),
-                  Container(
-                    width: 150,
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(item['title'] ?? 'Başlık Yok',style :TextStyle(fontSize: 14),maxLines: 2,overflow: TextOverflow.ellipsis)),
-                ],
-              )
+                );
+              }else if (item is Podcast) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => PodcastPage(podcast: item),
+                  ),
+                );
+              }
+            },
+            child: Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 150,height: 150,
+                      child:  item is Article && item.image != null && item.image.isNotEmpty
+                          ? ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image.network(item.image, fit: BoxFit.cover),
+                      )
+                          : item is Podcast && item.image != null && item.image.isNotEmpty
+                          ? ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image.network(item.image, fit: BoxFit.cover),
+                      )
+                          : ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image.asset('resimler/lotus_resim.png', fit: BoxFit.cover),
+                      ),
+                    ),
+                    Container(
+                      width: 150,
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(item is Article ? item.title :item is Podcast ? item.title: 'Başlık Yok',style :TextStyle(fontSize: 14),maxLines: 2,overflow: TextOverflow.ellipsis)),
+                  ],
+                )
+            ),
           );
         }
     ),

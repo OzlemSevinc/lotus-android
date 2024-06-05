@@ -90,7 +90,7 @@ class _MarketListState extends State<MarketList> {
                   product['productImages'][0]['imageUrl'] ?? '',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(resim, fit: BoxFit.cover);
+                    return Image.asset(resim, width: 150,height: 150, fit: BoxFit.cover);
                   },
                 ),
               ),
