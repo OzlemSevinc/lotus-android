@@ -14,9 +14,17 @@ class MarketList extends StatefulWidget {
 }
 
 class _MarketListState extends State<MarketList> {
-  List<dynamic> products = [];
+  List<Product> products = [];
   final ProductService productService = ProductService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
   bool isLoading = true;
+
+  String? searchQuery;
+  int? minPrice;
+  int? maxPrice;
+  bool? validPriceRange;
+  int? categoryId;
+  int? pageNumber;
+  int? pageSize;
 
   @override
   void initState() {
@@ -26,9 +34,17 @@ class _MarketListState extends State<MarketList> {
 
   Future<void> fetchProducts() async {
     try {
-      final fetchedProducts = await productService.fetchProducts();
+      final fetchedProducts = await productService.fetchandFilterProducts(
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        validPriceRange: validPriceRange,
+        categoryId: categoryId,
+        pageNumber: pageNumber,
+        pageSize: pageSize
+      );
       setState(() {
         products = fetchedProducts;
+        //print(products[0].images[0]);
         isLoading = false;
       });
     } catch (e) {
@@ -41,6 +57,29 @@ class _MarketListState extends State<MarketList> {
       );
     }
   }
+
+  Future<void> searchProducts() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final searchedProducts = await productService.searchProducts(searchQuery ?? '');
+      setState(() {
+        products = searchedProducts;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Arama başarısız: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,57 +113,67 @@ class _MarketListState extends State<MarketList> {
     );
   }
 
-  Widget _buildHorizontalListView(BuildContext context, {required String resim, required List<dynamic> items}) {
+  Widget _buildHorizontalListView(BuildContext context, {required String resim, required List<Product> items}) {
     return ListView.builder(
       scrollDirection: Axis.vertical,
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
         final product = items[index];
-        return Card(
-          child: Row(
-            children: [
-              SizedBox(
-                width: 150,
-                height: 150,
-                child: Image.network(
-                  product['productImages'][0]['imageUrl'] ?? '',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(resim, width: 150,height: 150, fit: BoxFit.cover);
-                  },
-                ),
+        return GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ProductPage(product: product),
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product['productName'] ?? 'Ürün Adı Yok',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        "Açıklama: ${product['productDefinition'] ?? 'Açıklama Yok'}",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      Text(
-                        "Konum: ${product['productLocation'] ?? 'Konum Yok'}",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      Text(
-                        "Fiyat: ${product['price'] != null ? product['price'].toString() : 'Fiyat Yok'}",
-                        style: TextStyle(fontSize: 14),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+            );
+          },
+          child: Card(
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Image.network(
+                    product.images.isNotEmpty ? product.images[0].imageUrl : 'resimler/lotus_resim.png',
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context,error,stackTrace){
+                      return Image.asset(resim, width: 150,height: 150, fit: BoxFit.cover);
+                    },
                   ),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.name ?? 'Ürün Adı Yok',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          "Açıklama: ${product.definition ?? 'Açıklama Yok'}",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          "Konum: ${product.location ?? 'Konum Yok'}",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          "Fiyat: ${product.price != null ? product.price.toString() : 'Fiyat Yok'}",
+                          style: TextStyle(fontSize: 14),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -143,29 +192,26 @@ class _MarketListState extends State<MarketList> {
       padding: const EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
       child: SearchAnchor(
           builder: (BuildContext context, SearchController controller) {
+            controller.text=searchQuery ?? '';
             return SearchBar(
               controller: controller,
               padding: const MaterialStatePropertyAll<EdgeInsets>(
                   EdgeInsets.symmetric(horizontal: 16.0)),
               onTap: () {
-                controller.openView();
               },
-              onChanged: (_) {
-                controller.openView();
+              onChanged: (value) {
+                setState(() {
+                  searchQuery=value;
+                });
+              },
+              onSubmitted: (value){
+                searchProducts();
               },
               leading: const Icon(Icons.search),
             );
           }, suggestionsBuilder:
           (BuildContext context, SearchController controller) {
-        return List<ListTile>.generate(5, (int index) {
-          final String item = 'item $index';
-          return ListTile(
-            title: Text(item),
-            onTap: () {
-              addItemToSearchHistory(item);
-            },
-          );
-        });
+        return [];
       }),
     );
   }

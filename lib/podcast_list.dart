@@ -60,7 +60,7 @@ class _PodcastListState extends State<PodcastList> {
     }
   }
 
-  Future<void> searchArticles() async {
+  Future<void> searchPodcasts() async {
     setState(() {
       isLoading = true;
     });
@@ -158,12 +158,6 @@ class _PodcastListState extends State<PodcastList> {
     );
   }
 
-  void addItemToSearchHistory(String item) {
-    setState(() {
-
-    });
-  }
-
   Widget _searchBar(BuildContext context) {
     return Container(
       color: mainPink,
@@ -175,24 +169,20 @@ class _PodcastListState extends State<PodcastList> {
               padding: const MaterialStatePropertyAll<EdgeInsets>(
                   EdgeInsets.symmetric(horizontal: 16.0)),
               onTap: () {
-                controller.openView();
               },
-              onChanged: (_) {
-                controller.openView();
+              onChanged: (value) {
+                setState(() {
+                  searchQuery=value;
+                });
+              },
+              onSubmitted: (value){
+                searchPodcasts();
               },
               leading: const Icon(Icons.search),
             );
           }, suggestionsBuilder:
           (BuildContext context, SearchController controller) {
-        return List<ListTile>.generate(5, (int index) {
-          final String item = 'item $index';
-          return ListTile(
-            title: Text(item),
-            onTap: () {
-              addItemToSearchHistory(item);
-            },
-          );
-        });
+        return [];
       }),
     );
   }

@@ -29,8 +29,8 @@ class ArticleService {
       if (sortByAlphabeticalDescending != null) 'SortByAlphabeticalDescending': sortByAlphabeticalDescending.toString(),
       if (sortByDate != null) 'SortByDate': sortByDate.toString(),
       if (sortByDateAscending != null) 'SortByDateAscending': sortByDateAscending.toString(),
-      'PageNumber': pageNumber.toString(),
-      'PageSize': pageSize.toString(),
+      if(pageNumber != null) 'PageNumber': pageNumber.toString(),
+      if(pageSize != null)'PageSize': pageSize.toString(),
     });
 
     final response = await http.get(url, headers: {

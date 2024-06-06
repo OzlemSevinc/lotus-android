@@ -88,19 +88,33 @@ class _PodcastPageState extends State<PodcastPage> {
         backgroundColor: mainPink,
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          SizedBox(
-            width: 300,
-            height: 300,
-            child: Image.asset(widget.podcast.image),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0,right: 20.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image.network(
+                widget.podcast.image ?? '',
+                width: 300,
+                height: 300,
+                fit: BoxFit.cover,
+                errorBuilder: (context,error,stackTrace){
+                  return Image.asset("resimler/lotus_resim.png", width: 300,height: 300, fit: BoxFit.cover);
+                },
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Text(widget.podcast.title,style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold))
+                Expanded(
+                  child: Text(widget.podcast.title,style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,),
+                )
               ],
             ),
           ),
