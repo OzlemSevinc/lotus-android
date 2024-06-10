@@ -102,9 +102,12 @@ class _MarketListState extends State<MarketList> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const AddProduct()));
+        onPressed: () async{
+          final result = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const AddProduct(title: "Ürün ekleme",)));
+          if (result == true) {
+            fetchProducts();
+          }
         },
 
         backgroundColor: green,
@@ -180,11 +183,6 @@ class _MarketListState extends State<MarketList> {
     );
   }
 
-  void addItemToSearchHistory(String item) {
-    setState(() {
-
-    });
-  }
 
   Widget _searchBar(BuildContext context) {
     return Container(

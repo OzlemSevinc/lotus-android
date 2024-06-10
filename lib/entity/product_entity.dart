@@ -5,7 +5,7 @@ class Product {
   String? status;
   String ownerId;
   double price;
-  String category;
+  int category;
   List<ProductImage> images;
   String location;
   DateTime productTime;
@@ -31,7 +31,7 @@ class Product {
       status: json['productStatus'] ,
       ownerId: json['ownerId'] ?? '',
       price: json['price']?.toDouble() ?? 0.0,
-      category: json['categoryId'].toString() ?? '',
+      category: json['categoryId'] ?? '',
       images: json['productImages'] !=null
       ? (json['productImages'] as List)
           .map((i) => ProductImage.fromJson(i))
@@ -39,6 +39,18 @@ class Product {
       location: json['productLocation'] ?? '',
       productTime: DateTime.parse(json['productTime'] ?? DateTime.now().toIso8601String() )
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'productName': name,
+      'productDefinition': definition,
+      'ownerId': ownerId,
+      'price': price,
+      'categoryId': category,
+      'productLocation': location,
+      'id': id,
+    };
   }
 }
 
@@ -58,6 +70,31 @@ class ProductImage {
       id: json['id'] ?? 0,
       productId: json['productId'] ?? 0,
       imageUrl: json['imageUrl'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'productId': productId,
+      'imageUrl': imageUrl,
+    };
+  }
+}
+
+class ProductCategory {
+  int id;
+  String name;
+
+  ProductCategory({
+    required this.id,
+    required this.name,
+  });
+
+  factory ProductCategory.fromJson(Map<String, dynamic> json) {
+    return ProductCategory(
+      id: json['productCategoryId'],
+      name: json['productCategoryName'],
     );
   }
 }
