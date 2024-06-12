@@ -11,14 +11,31 @@ class Article{
 
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
-      id: json['id'] ?? '',
+      id: json['id'] ?? 0,
       title: json['title'] ?? '',
       content: json['contentText'] ?? '',
       date: json['releaseDate'] ?? '',
       writer: json['writers'] ?? '',
       image: json['image'] ?? '',
-      categoryId: json['articleCategoryId'] ?? '',
+      categoryId: json['articleCategoryId'] ?? 0,
     );
   }
 
+}
+
+class ArticleCategory {
+  int id;
+  String name;
+
+  ArticleCategory({
+    required this.id,
+    required this.name,
+  });
+
+  factory ArticleCategory.fromJson(Map<String, dynamic> json) {
+    return ArticleCategory(
+      id: json['articleCategoryId'],
+      name: json['articleCategoryName'],
+    );
+  }
 }

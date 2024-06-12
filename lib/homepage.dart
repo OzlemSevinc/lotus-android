@@ -21,7 +21,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  User currentUser=User(name:"null",surname: "null",email:null,pregnancyStatus: null,userId: null,fetusPicture: null);
+  User currentUser=User(name:"null",surname: "null",email:null,pregnancyStatus: null,userId: "null",fetusPicture: null,userType: 0,userImage: null);
   List<Article> articles = [];
   List<Podcast> podcasts = [];
   //var articleList=["Makale1","Makale2","Makale3","Makale4","Makale5","Makale6","Makale7"];
@@ -56,7 +56,9 @@ class _HomepageState extends State<Homepage> {
             email: userDetails['email'],
             pregnancyStatus: userDetails['pregnancyStatus']?.toString(),
             userId: userDetails['id'],
-            fetusPicture: userDetails['fetusPicture']
+            fetusPicture: userDetails['fetusPicture'],
+            userType: userDetails['userType'],
+            userImage:userDetails['image']
           );
           isLoading = false;
         });

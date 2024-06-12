@@ -29,8 +29,8 @@ class ArticleService {
       if (sortByAlphabeticalDescending != null) 'SortByAlphabeticalDescending': sortByAlphabeticalDescending.toString(),
       if (sortByDate != null) 'SortByDate': sortByDate.toString(),
       if (sortByDateAscending != null) 'SortByDateAscending': sortByDateAscending.toString(),
-      'PageNumber': pageNumber.toString(),
-      'PageSize': pageSize.toString(),
+      if(pageNumber != null) 'PageNumber': pageNumber.toString(),
+      if(pageSize != null)'PageSize': pageSize.toString(),
     });
 
     final response = await http.get(url, headers: {
@@ -59,6 +59,21 @@ class ArticleService {
       return data.map((json) => Article.fromJson(json)).toList();
     } else {
       throw Exception('Makaleler aranamadı');
+    }
+  }
+
+  Future<List<ArticleCategory>> fetchArticleCategories() async {
+    final url = Uri.parse('$baseUrl/articleCategories');
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => ArticleCategory.fromJson(json)).toList();
+    } else {
+      throw Exception('Kategoriler yüklenemedi');
     }
   }
 }
