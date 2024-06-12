@@ -4,6 +4,7 @@ import 'package:lotus/forum_list.dart';
 import 'package:lotus/market_list.dart';
 import 'package:lotus/profile.dart';
 import 'package:lotus/colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
@@ -14,7 +15,21 @@ class BottomNavigation extends StatefulWidget {
 
 class _BottomNavigationState extends State<BottomNavigation> {
   int chosenIndex=0;
-  static List<Widget> pages=<Widget>[const Homepage(),const ForumList(),const MarketList(),const MarketList(),const Profile()];
+  String? currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUserId();
+  }
+
+  Future<void> getCurrentUserId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      currentUserId = prefs.getString('userId');
+    });
+  }
+  static List<Widget> pages(String? currentUserId) => [const Homepage(),const ForumList(),const MarketList(),const MarketList(),if (currentUserId != null) Profile(userId: currentUserId),];
 
   Future<bool> onWillPop() async {
     if (chosenIndex != 0) {
@@ -32,7 +47,9 @@ class _BottomNavigationState extends State<BottomNavigation> {
       onWillPop: onWillPop,
       child: Scaffold(
         body: Center(
-            child: pages.elementAt(chosenIndex)),
+            child: currentUserId != null
+                ? pages(currentUserId).elementAt(chosenIndex)
+                : const CircularProgressIndicator()),
         bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(
             canvasColor: mainPink,

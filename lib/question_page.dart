@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lotus/colors.dart';
 import 'package:lotus/entity/forum_entity.dart';
+import 'package:lotus/profile.dart';
 import 'package:lotus/service/forum_service.dart';
 import 'package:lotus/service/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,6 +101,14 @@ class _QuestionPageState extends State<QuestionPage> {
     });
   }
 
+  void navigateToUserProfile(String userId) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Profile(userId: userId),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userAnswers = widget.question.answers.where((a) => a.userType == 0).toList();
@@ -108,6 +117,20 @@ class _QuestionPageState extends State<QuestionPage> {
     String getUserName(String userId, bool isAnonymous) {
       if (isAnonymous&&widget.question.userId==userId) return 'Anonim';
       return userNames[userId] ?? 'Yükleniyor...';
+    }
+
+    Widget buildUserName(String userId, bool isAnonymous) {
+      if (isAnonymous && widget.question.userId == userId) {
+        return Text('Anonim', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold));
+      } else {
+        return GestureDetector(
+          onTap: () => navigateToUserProfile(userId),
+          child: Text(
+            getUserName(userId, isAnonymous),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        );
+      }
     }
 
     return Scaffold(
@@ -129,12 +152,7 @@ class _QuestionPageState extends State<QuestionPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.question.anonymous == 1
-                        ? 'Anonim'
-                        : getUserName(widget.question.userId, widget.question.anonymous == 1),
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
+                  buildUserName(widget.question.userId, widget.question.anonymous == 1),
                   SizedBox(height: 8.0),
                   Text(
                     widget.question.question,
@@ -190,10 +208,7 @@ class _QuestionPageState extends State<QuestionPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              getUserName(a.userId, widget.question.anonymous == 1),
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                            ),
+                            buildUserName(a.userId, widget.question.anonymous == 1),
                             SizedBox(height: 8.0),
                             Text(a.answerContent),
                           ],
