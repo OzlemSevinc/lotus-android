@@ -61,4 +61,19 @@ class ArticleService {
       throw Exception('Makaleler aranamadı');
     }
   }
+
+  Future<List<ArticleCategory>> fetchArticleCategories() async {
+    final url = Uri.parse('$baseUrl/articleCategories');
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => ArticleCategory.fromJson(json)).toList();
+    } else {
+      throw Exception('Kategoriler yüklenemedi');
+    }
+  }
 }

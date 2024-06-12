@@ -22,3 +22,20 @@ class Article{
   }
 
 }
+
+class ArticleCategory {
+  int id;
+  String name;
+
+  ArticleCategory({
+    required this.id,
+    required this.name,
+  });
+
+  factory ArticleCategory.fromJson(Map<String, dynamic> json) {
+    return ArticleCategory(
+      id: json['articleCategoryId'],
+      name: json['articleCategoryName'],
+    );
+  }
+}

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lotus/article_list.dart';
 import 'package:lotus/colors.dart';
+import 'package:lotus/entity/forum_entity.dart';
+import 'package:lotus/question_page.dart';
+
+import 'add_question.dart';
+import 'service/forum_service.dart';
 
 class ForumList extends StatefulWidget {
   const ForumList({super.key});
@@ -10,15 +14,224 @@ class ForumList extends StatefulWidget {
 }
 
 class _ForumListState extends State<ForumList> {
-  var questionList = [
-    "Soru1",
-    "Soru2",
-    "Soru3",
-    "Soru4",
-    "Soru5",
-    "Soru6",
-    "Soru7"
-  ];
+  List<Question> questions = [];
+  List<ForumQuestionCategory> categories = [];
+  final ForumService forumService = ForumService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
+  bool isLoading = true;
+
+  String? searchQuery;
+  int? selectedCategoryId;
+  bool? sortByAlphabetical;
+  bool? sortByAlphabeticalDescending;
+  bool? sortByDate;
+  bool? sortByDateAscending;
+  int? pageNumber ;
+  int? pageSize =100;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+    fetchQuestions();
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      final fetchedCategories = await forumService.fetchQuestionCategories();
+      setState(() {
+        categories = fetchedCategories;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Kategoriler yüklenemedi: $e')),
+      );
+    }
+  }
+
+  Future<void> fetchQuestions() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final fetchedQuestions = await forumService.fetchAndFilterQuestions(
+        categoryId: selectedCategoryId,
+        sortByAlphabetical: sortByAlphabetical,
+        sortByAlphabeticalDescending: sortByAlphabeticalDescending,
+        sortByDate: sortByDate,
+        sortByDateAscending: sortByDateAscending,
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+      );
+      setState(() {
+        questions = fetchedQuestions;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sorular yüklenemedi: $e')),
+      );
+    }
+  }
+
+  Future<void> searchQuestions() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final searchedQuestions = await forumService.searchQuestions(searchQuery ?? '');
+      setState(() {
+        questions = searchedQuestions;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Arama başarısız: $e')),
+      );
+    }
+  }
+
+  void showFilterDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              width: double.infinity,
+              height: 400,
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  DropdownButton<int>(
+                    hint: Text("Kategori seçiniz"),
+                    value: selectedCategoryId,
+                    onChanged: (int? value) {
+                      setState(() {
+                        selectedCategoryId = value;
+                      });
+                    },
+                    items: categories.map((category) {
+                      return DropdownMenuItem(
+                        child: Text(category.name),
+                        value: category.id,
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      fetchQuestions();
+                    },
+                    child: Text("Uygula"),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void showSortDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: Text("Alfabetik Sırala (A-Z)"),
+                    leading: Radio<bool>(
+                      value: true,
+                      groupValue: sortByAlphabetical,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          sortByAlphabetical = value;
+                          sortByAlphabeticalDescending = false;
+                          sortByDate = false;
+                          sortByDateAscending = false;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Alfabetik Sırala (Z-A)"),
+                    leading: Radio<bool>(
+                      value: true,
+                      groupValue: sortByAlphabeticalDescending,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          sortByAlphabetical = false;
+                          sortByAlphabeticalDescending = value;
+                          sortByDate = false;
+                          sortByDateAscending = false;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Tarihe Göre Sırala (Yeni)"),
+                    leading: Radio<bool>(
+                      value: true,
+                      groupValue: sortByDate,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          sortByAlphabetical = false;
+                          sortByAlphabeticalDescending = false;
+                          sortByDate = value;
+                          sortByDateAscending = false;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Tarihe Göre Sırala (Eski)"),
+                    leading: Radio<bool>(
+                      value: true,
+                      groupValue: sortByDateAscending,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          sortByAlphabetical = false;
+                          sortByAlphabeticalDescending = false;
+                          sortByDate = false;
+                          sortByDateAscending = value;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      fetchQuestions();
+                    },
+                    child: Text("Uygula"),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +243,23 @@ class _ForumListState extends State<ForumList> {
       body: Column(
         children: <Widget>[
           _searchBar(context),
-          Expanded(
-              child: _buildHorizontalListView(
-                  context, resim: "resimler/lotus_resim.png",
-                  items: questionList)
+          filterAndSortButtons(),
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Expanded(
+            child: _buildHorizontalListView(
+                context, items: questions),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-
+        onPressed:() async{
+          final result = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const AddQuestionPage()));
+          if (result == true) {
+            fetchQuestions();
+          }
+        },
         backgroundColor: green,
         child: const Icon(Icons.add),
       ),
@@ -48,28 +268,48 @@ class _ForumListState extends State<ForumList> {
 
 
   Widget _buildHorizontalListView(BuildContext context,
-      { required String resim, required List<String> items}) {
+      {  required List<Question> items}) {
     return ListView.builder(
         scrollDirection: Axis.vertical,
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) {
-          return Card(
-              child: Row(
-                children: [
-                  SizedBox(width: 150, height: 150, child: Image.asset(resim),),
-                  Text(items[index]),
-                ],
-              )
+          final question = items[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => QuestionPage(question: question),
+                ),
+              );
+            },
+            child: Card(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              question.question,
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text("Sorulma Tarihi: ${question.creationDate}", style: const TextStyle(fontSize: 16)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+            ),
           );
         }
     );
   }
 
-  void addItemToSearchHistory(String item) {
-    setState(() {
-
-    });
-  }
   Widget _searchBar(BuildContext context) {
     return Container(
       color: mainPink,
@@ -81,25 +321,52 @@ class _ForumListState extends State<ForumList> {
               padding: const MaterialStatePropertyAll<EdgeInsets>(
                   EdgeInsets.symmetric(horizontal: 16.0)),
               onTap: () {
-                controller.openView();
               },
-              onChanged: (_) {
-                controller.openView();
+              onChanged: (value) {
+                setState(() {
+                  searchQuery=value;
+                });
+              },
+              onSubmitted: (value){
+                searchQuestions();
               },
               leading: const Icon(Icons.search),
             );
           }, suggestionsBuilder:
           (BuildContext context, SearchController controller) {
-        return List<ListTile>.generate(5, (int index) {
-          final String item = 'item $index';
-          return ListTile(
-            title: Text(item),
-            onTap: () {
-              addItemToSearchHistory(item);
-            },
-          );
-        });
+        return [];
       }),
+    );
+  }
+
+  Widget filterAndSortButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ElevatedButton.icon(
+            onPressed: () => showFilterDialog(context),
+            icon: Icon(Icons.filter_list),
+            label: Text("Filtrele"),
+            style: ElevatedButton.styleFrom(
+              primary: mainPink,
+              onPrimary: Colors.white,
+              minimumSize: Size(150, 48),
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: () => showSortDialog(context),
+            icon: Icon(Icons.sort),
+            label: Text("Sırala"),
+            style: ElevatedButton.styleFrom(
+              primary: mainPink,
+              onPrimary: Colors.white,
+              minimumSize: Size(150, 48),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
