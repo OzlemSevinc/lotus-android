@@ -102,38 +102,46 @@ class _ForumListState extends State<ForumList> {
   void showFilterDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Container(
-              width: double.infinity,
-              height: 400,
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
+              height: MediaQuery.of(context).size.height * 0.4,
+              child: Wrap(
                 children: [
-                  DropdownButton<int>(
-                    hint: Text("Kategori seçiniz"),
-                    value: selectedCategoryId,
-                    onChanged: (int? value) {
-                      setState(() {
-                        selectedCategoryId = value;
-                      });
-                    },
-                    items: categories.map((category) {
-                      return DropdownMenuItem(
-                        child: Text(category.name),
-                        value: category.id,
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      fetchQuestions();
-                    },
-                    child: Text("Uygula"),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DropdownButton<int>(
+                        hint: Text("Kategori seçiniz"),
+                        value: selectedCategoryId,
+                        onChanged: (int? value) {
+                          setState(() {
+                            selectedCategoryId = value;
+                          });
+                        },
+                        items: categories.map((category) {
+                          return DropdownMenuItem(
+                            child: Text(category.name),
+                            value: category.id,
+                          );
+                        }).toList(),
+                        isExpanded: true,
+                      ),
+                      SizedBox(height: 32.0),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            fetchQuestions();
+                          },
+                          child: Text("Uygula"),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -147,82 +155,89 @@ class _ForumListState extends State<ForumList> {
   void showSortDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Container(
-              width: double.infinity,
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              child: Wrap(
                 children: [
-                  ListTile(
-                    title: Text("Alfabetik Sırala (A-Z)"),
-                    leading: Radio<bool>(
-                      value: true,
-                      groupValue: sortByAlphabetical,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          sortByAlphabetical = value;
-                          sortByAlphabeticalDescending = false;
-                          sortByDate = false;
-                          sortByDateAscending = false;
-                        });
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    title: Text("Alfabetik Sırala (Z-A)"),
-                    leading: Radio<bool>(
-                      value: true,
-                      groupValue: sortByAlphabeticalDescending,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          sortByAlphabetical = false;
-                          sortByAlphabeticalDescending = value;
-                          sortByDate = false;
-                          sortByDateAscending = false;
-                        });
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    title: Text("Tarihe Göre Sırala (Yeni)"),
-                    leading: Radio<bool>(
-                      value: true,
-                      groupValue: sortByDate,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          sortByAlphabetical = false;
-                          sortByAlphabeticalDescending = false;
-                          sortByDate = value;
-                          sortByDateAscending = false;
-                        });
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    title: Text("Tarihe Göre Sırala (Eski)"),
-                    leading: Radio<bool>(
-                      value: true,
-                      groupValue: sortByDateAscending,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          sortByAlphabetical = false;
-                          sortByAlphabeticalDescending = false;
-                          sortByDate = false;
-                          sortByDateAscending = value;
-                        });
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      fetchQuestions();
-                    },
-                    child: Text("Uygula"),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        title: Text("Alfabetik Sırala (A-Z)"),
+                        leading: Radio<bool>(
+                          value: true,
+                          groupValue: sortByAlphabetical,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              sortByAlphabetical = value;
+                              sortByAlphabeticalDescending = false;
+                              sortByDate = false;
+                              sortByDateAscending = false;
+                            });
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        title: Text("Alfabetik Sırala (Z-A)"),
+                        leading: Radio<bool>(
+                          value: true,
+                          groupValue: sortByAlphabeticalDescending,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              sortByAlphabetical = false;
+                              sortByAlphabeticalDescending = value;
+                              sortByDate = false;
+                              sortByDateAscending = false;
+                            });
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        title: Text("Tarihe Göre Sırala (Yeni)"),
+                        leading: Radio<bool>(
+                          value: true,
+                          groupValue: sortByDate,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              sortByAlphabetical = false;
+                              sortByAlphabeticalDescending = false;
+                              sortByDate = value;
+                              sortByDateAscending = false;
+                            });
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        title: Text("Tarihe Göre Sırala (Eski)"),
+                        leading: Radio<bool>(
+                          value: true,
+                          groupValue: sortByDateAscending,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              sortByAlphabetical = false;
+                              sortByAlphabeticalDescending = false;
+                              sortByDate = false;
+                              sortByDateAscending = value;
+                            });
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 16.0),
+                      SizedBox(
+                        width: 400,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            fetchQuestions();
+                          },
+                          child: Text("Uygula"),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

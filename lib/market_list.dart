@@ -152,17 +152,19 @@ class _MarketListState extends State<MarketList> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          product.name ?? 'Ürün Adı Yok',
+                          product.name ,
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          "Açıklama: ${product.definition ?? 'Açıklama Yok'}",
+                          "Açıklama: ${product.definition }",
                           style: TextStyle(fontSize: 16),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          "Konum: ${product.location ?? 'Konum Yok'}",
+                          "Konum: ${product.location }",
                           style: TextStyle(fontSize: 16),
                         ),
                         Text(
