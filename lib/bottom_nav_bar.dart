@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lotus/chat_history_page.dart';
 import 'package:lotus/homepage.dart';
 import 'package:lotus/forum_list.dart';
 import 'package:lotus/market_list.dart';
@@ -15,7 +16,7 @@ class BottomNavigation extends StatefulWidget {
 
 class _BottomNavigationState extends State<BottomNavigation> {
   int chosenIndex=0;
-  String? currentUserId;
+  late String currentUserId;
 
   @override
   void initState() {
@@ -26,10 +27,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
   Future<void> getCurrentUserId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      currentUserId = prefs.getString('userId');
+      currentUserId = prefs.getString('userId')!;
     });
   }
-  static List<Widget> pages(String? currentUserId) => [const Homepage(),const ForumList(),const MarketList(),const MarketList(),if (currentUserId != null) Profile(userId: currentUserId),];
+  static List<Widget> pages(String? currentUserId) => [const Homepage(),const ForumList(), ConversationsPage(userId: currentUserId!),const MarketList(),if (currentUserId != null) Profile(userId: currentUserId),];
 
   Future<bool> onWillPop() async {
     if (chosenIndex != 0) {

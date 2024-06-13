@@ -6,6 +6,8 @@ import 'package:lotus/entity/user_entity.dart';
 import 'package:lotus/service/user_service.dart';
 import 'package:lotus/settings_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'chat_page.dart';
 class Profile extends StatefulWidget {
   final String userId;
 
@@ -21,12 +23,24 @@ class _ProfileState extends State<Profile> {
   bool isLoading = true;
   bool isCurrentUser = false;
   final UserService userService = UserService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
+  late String currentUserId;
+
+
 
   @override
   void initState() {
     super.initState();
     fetchUserData();
+    getCurrentUserId();
   }
+
+  Future<void> getCurrentUserId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      currentUserId = prefs.getString('userId')!;
+    });
+  }
+
 
   Future<void> fetchUserData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -304,7 +318,15 @@ class _ProfileState extends State<Profile> {
                       if (!isCurrentUser)
                         ElevatedButton(
                           onPressed: () {
-
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                  userId: currentUserId,
+                                  otherUserId: widget.userId,
+                                ),
+                              ),
+                            );
                           },
                           child: const Text('Mesaj Yaz'),
                         ),

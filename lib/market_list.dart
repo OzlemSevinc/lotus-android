@@ -24,7 +24,7 @@ class _MarketListState extends State<MarketList> {
   bool? validPriceRange;
   int? categoryId;
   int? pageNumber;
-  int? pageSize;
+  int? pageSize=100;
 
   @override
   void initState() {

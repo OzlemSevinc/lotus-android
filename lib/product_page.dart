@@ -7,6 +7,7 @@ import 'package:lotus/service/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'add_product.dart';
+import 'chat_page.dart';
 
 class ProductPage extends StatefulWidget  {
   final Product product;
@@ -157,7 +158,17 @@ class _ProductPageState extends State<ProductPage> {
             else
               Center(
                 child: ElevatedButton(
-                  onPressed: (){},//Chat yönlendirme
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                          userId: currentUserId!,
+                          otherUserId: widget.product.ownerId,
+                        ),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(backgroundColor: mainPink),
                   child: const Text("Mesaj Yaz"),
                 ),
