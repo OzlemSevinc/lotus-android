@@ -55,4 +55,37 @@ class UserService {
       throw Exception('Kullanıcı güncellenemedi');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getUserAppointments(String userId) async {
+    final url = Uri.parse('$baseUrl/user/$userId/appointments');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+    } else {
+      throw Exception('Randevular alınamadı');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUserQuestions(String userId) async {
+    final url = Uri.parse('$baseUrl/user/$userId/forum-questions');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+    } else {
+      throw Exception('Sorular alınamadı');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUserProducts(String userId) async {
+    final url = Uri.parse('$baseUrl/user/$userId/products');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+    } else {
+      throw Exception('Ürünler alınamadı');
+    }
+  }
 }

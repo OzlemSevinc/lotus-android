@@ -3,12 +3,15 @@ import 'package:lotus/colors.dart';
 import 'package:lotus/entity/article_entity.dart';
 import 'package:lotus/podcast_page.dart';
 import 'package:lotus/service/article_service.dart';
+import 'package:lotus/service/doctor_service.dart';
 import 'package:lotus/service/podcast_service.dart';
 import 'package:lotus/service/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'article_list.dart';
 import 'article_page.dart';
 import 'doctor_list.dart';
+import 'doctor_page.dart';
+import 'entity/doctor_entity.dart';
 import 'entity/podcast_entity.dart';
 import 'entity/user_entity.dart';
 import 'podcast_list.dart';
@@ -21,15 +24,17 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  User currentUser=User(name:"null",surname: "null",email:null,pregnancyStatus: null,userId: "null",fetusPicture: null,userType: 0,userImage: null);
+  late User currentUser ;
   List<Article> articles = [];
   List<Podcast> podcasts = [];
+  List<Doctor> doctors=[];
   //var articleList=["Makale1","Makale2","Makale3","Makale4","Makale5","Makale6","Makale7"];
   //var podcastList=["Podcast1","Podcast2","Podcast3","Podcast4","Podcast5","Podcast6","Podcast7"];
-  var doctorList=["Doktor1","Doktor2","Doktor3","Doktor4","Doktor5","Doktor6","Doktor7"];
+ // var doctorList=["Doktor1","Doktor2","Doktor3","Doktor4","Doktor5","Doktor6","Doktor7"];
   final UserService userService = UserService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
   final ArticleService articleService = ArticleService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
   final PodcastService podcastService = PodcastService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
+  final DoctorService doctorService = DoctorService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
   bool isLoading = true;
 
   @override
@@ -38,6 +43,7 @@ class _HomepageState extends State<Homepage> {
     fetchCurrentUser();
     fetchArticles();
     fetchPodcasts();
+    fetchDoctors();
   }
 
   Future<void> fetchCurrentUser() async {
@@ -49,28 +55,34 @@ class _HomepageState extends State<Homepage> {
 
       if (userId != null ) {
         final userDetails = await userService.getUserById(userId);
-        setState(() {
-          currentUser = User(
-            name: userDetails['userName'],
-            surname: userDetails['surname'],
-            email: userDetails['email'],
-            pregnancyStatus: userDetails['pregnancyStatus']?.toString(),
-            userId: userDetails['id'],
-            fetusPicture: userDetails['fetusPicture'],
-            userType: userDetails['userType'],
-            userImage:userDetails['image']
-          );
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            currentUser = User(
+                name: userDetails['userName'],
+                surname: userDetails['surname'],
+                email: userDetails['email'],
+                pregnancyStatus: userDetails['pregnancyStatus']?.toString(),
+                userId: userDetails['id'],
+                fetusPicture: userDetails['fetusPicture'],
+                userType: userDetails['userType'],
+                userImage: userDetails['image']
+            );
+            isLoading = false;
+          });
+        }
       }else{
-        setState(() {
-          isLoading=false;
-        });
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
       }
     } catch (e) {
-      setState(() {
-        isLoading=false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Kullanıcı bilgileri alınamadı: $e')),
@@ -81,10 +93,11 @@ class _HomepageState extends State<Homepage> {
   Future<void> fetchArticles() async {
     try {
       final fetchedArticles = await articleService.fetchandFilterArticles(pageNumber: 0, pageSize: 5);
-      setState(() {
-        articles = fetchedArticles;
-      });
-      print(articles.first);
+      if (mounted) {
+        setState(() {
+          articles = fetchedArticles;
+        });
+      }
     } catch (e) {
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -95,14 +108,31 @@ class _HomepageState extends State<Homepage> {
   Future<void> fetchPodcasts() async {
     try {
       final fetchedPodcasts = await podcastService.fetchandFilterPodcasts(pageNumber: 0,pageSize: 5);
-      setState(() {
-        podcasts = fetchedPodcasts;
-      });
-      print(podcasts[0]);
+      if (mounted) {
+        setState(() {
+          podcasts = fetchedPodcasts;
+        });
+      }
     } catch (e) {
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Podcastler yüklenemedi: $e')),
+      );
+    }
+  }
+
+  Future<void> fetchDoctors() async {
+    try {
+      final fetchedDoctors = await doctorService.fetchAndFilterDoctors(pageNumber: 0,pageSize: 5);
+      if (mounted) {
+        setState(() {
+          doctors = fetchedDoctors;
+        });
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Doktorlar yüklenemedi: $e')),
       );
     }
   }
@@ -165,7 +195,7 @@ class _HomepageState extends State<Homepage> {
                 _buildTextandTextButton(context,title: "Podcast",textButton: "Tümünü Gör",destination: (context) => const PodcastList()),
                 _buildHorizontalListView<Podcast>(podcasts),
                 _buildTextandTextButton(context,title: "Doktorlar",textButton: "Tümünü Gör",destination: (context) => const DoctorList()),
-                _buildHorizontalListView<Article>(articles),
+                _buildHorizontalListView<Doctor>(doctors),
             ],
           ),
         ),
@@ -196,6 +226,12 @@ Widget _buildHorizontalListView<T>(List<T>items) {
                     builder: (context) => PodcastPage(podcast: item),
                   ),
                 );
+              }else if (item is Doctor){
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => DoctorPage(doctor: item),
+                  ),
+                );
               }
             },
             child: Card(
@@ -213,6 +249,11 @@ Widget _buildHorizontalListView<T>(List<T>items) {
                         borderRadius: BorderRadius.circular(10.0),
                         child: Image.network(item.image, fit: BoxFit.cover),
                       )
+                          : item is Doctor && item.image != null && item.image.isNotEmpty
+                          ? ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image.network(item.image, fit: BoxFit.cover),
+                      )
                           : ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
                         child: Image.asset('resimler/lotus_resim.png', fit: BoxFit.cover),
@@ -221,7 +262,7 @@ Widget _buildHorizontalListView<T>(List<T>items) {
                     Container(
                       width: 150,
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(item is Article ? item.title :item is Podcast ? item.title: 'Başlık Yok',style :TextStyle(fontSize: 14),maxLines: 2,overflow: TextOverflow.ellipsis)),
+                        child: Text(item is Article ? item.title :item is Podcast ? item.title :item is Doctor ? '${item.name} ${item.surname}': 'Başlık Yok',style :TextStyle(fontSize: 14),maxLines: 2,overflow: TextOverflow.ellipsis)),
                   ],
                 )
             ),

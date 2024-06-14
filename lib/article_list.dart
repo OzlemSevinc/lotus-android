@@ -25,7 +25,7 @@ class _ArticleListState extends State<ArticleList> {
   bool? sortByDate;
   bool? sortByDateAscending;
   int? pageNumber;
-  int? pageSize;
+  int? pageSize=100;
   List<ArticleCategory> categories=[];
   @override
   void initState() {

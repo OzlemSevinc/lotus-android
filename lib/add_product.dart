@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lotus/colors.dart';
 import 'package:lotus/service/product_service.dart';
@@ -26,6 +28,15 @@ class _AddProductState extends State<AddProduct> {
   final locationController = TextEditingController();
   int? selectedCategory;
   List<ProductCategory> categories = [];
+  String? selectedCity;
+  List<String> cities = ["Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", "Aydın", "Balıkesir",
+    "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır",
+    "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Isparta", "Mersin",
+    "İstanbul", "İzmir", "Kars", "Kastamonu", "Kayseri", "Kırklareli", "Kırşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa",
+    "Kahramanmaraş", "Mardin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Rize", "Sakarya", "Samsun", "Siirt",
+    "Sinop", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Şanlıurfa", "Uşak", "Van", "Yozgat", "Zonguldak",
+    "Aksaray", "Bayburt", "Karaman", "Kırıkkale", "Batman", "Şırnak", "Bartın", "Ardahan", "Iğdır", "Yalova", "Karabük", "Kilis", "Osmaniye", "Düzce"
+  ];
   final ProductService productService = ProductService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
   bool isLoading = false;
 
@@ -130,7 +141,7 @@ class _AddProductState extends State<AddProduct> {
         price: double.parse(priceController.text),
         category: selectedCategory!,
         images: existingImages,
-        location: locationController.text,
+        location: selectedCity!,
         productTime: DateTime.now(),
       );
 
@@ -260,31 +271,32 @@ class _AddProductState extends State<AddProduct> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (index < existingImages.length) {
-                              existingImages.removeAt(index);
-                            }
-                            if (index < images.length) {
-                              images.removeAt(index);
-                            }
-                          });
-                        },
-                        child: const CircleAvatar(
-                          radius: 12,
-                          backgroundColor: Colors.red,
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.white,
-                            size: 16,
+                    if(images.length > index && images[index] != null)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (index < existingImages.length) {
+                                existingImages.removeAt(index);
+                              }
+                              if (index < images.length) {
+                                images.removeAt(index);
+                              }
+                            });
+                          },
+                          child: const CircleAvatar(
+                            radius: 12,
+                            backgroundColor: Colors.red,
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 16,
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 );
               }),
@@ -326,10 +338,21 @@ class _AddProductState extends State<AddProduct> {
               ),
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: locationController,
+            DropdownButtonFormField<String>(
+              value: selectedCity,
+              hint: const Text('İl'),
+              items: cities.map((city) {
+                return DropdownMenuItem(
+                  value: city,
+                  child: Text(city),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedCity = value;
+                });
+              },
               decoration: InputDecoration(
-                labelText: 'Adres',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

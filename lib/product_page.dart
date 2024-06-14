@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lotus/colors.dart';
 import 'package:lotus/entity/product_entity.dart';
+import 'package:lotus/profile.dart';
 import 'package:lotus/service/product_service.dart';
+import 'package:lotus/service/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'add_product.dart';
+import 'chat_page.dart';
 
 class ProductPage extends StatefulWidget  {
   final Product product;
@@ -15,12 +18,15 @@ class ProductPage extends StatefulWidget  {
 }
 class _ProductPageState extends State<ProductPage> {
   String? currentUserId;
+  String? ownerName;
   final ProductService productService = ProductService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
+  final UserService userService = UserService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
 
   @override
   void initState() {
     super.initState();
     getCurrentUserId();
+    fetchOwnerDetails();
   }
 
   Future<void> getCurrentUserId() async {
@@ -28,6 +34,17 @@ class _ProductPageState extends State<ProductPage> {
     setState(() {
       currentUserId = prefs.getString('userId');
     });
+  }
+
+  Future<void> fetchOwnerDetails() async {
+    try {
+      final userDetails = await userService.getUserById(widget.product.ownerId);
+      setState(() {
+        ownerName = '${userDetails['userName']} ${userDetails['surname']}';
+      });
+    } catch (e) {
+      print('Satıcı bilgileri alınamadı: $e');
+    }
   }
 
   void updateProduct() {
@@ -47,6 +64,14 @@ class _ProductPageState extends State<ProductPage> {
         SnackBar(content: Text('Ürün silinemedi: $e')),
       );
     }
+  }
+
+  void navigateToOwnerProfile() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Profile(userId: widget.product.ownerId),
+      ),
+    );
   }
 
 
@@ -91,9 +116,12 @@ class _ProductPageState extends State<ProductPage> {
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8.0),
-            Text(
-              "Satıcı: ${widget.product.ownerId}",
-              style: const TextStyle(fontSize: 16),
+            GestureDetector(
+              onTap: navigateToOwnerProfile,
+              child: Text(
+                "Satıcı: $ownerName",
+                style: const TextStyle(fontSize: 16),
+              ),
             ),
             const SizedBox(height: 8.0),
             Text(
@@ -130,7 +158,17 @@ class _ProductPageState extends State<ProductPage> {
             else
               Center(
                 child: ElevatedButton(
-                  onPressed: (){},//Chat yönlendirme
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                          userId: currentUserId!,
+                          otherUserId: widget.product.ownerId,
+                        ),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(backgroundColor: mainPink),
                   child: const Text("Mesaj Yaz"),
                 ),
