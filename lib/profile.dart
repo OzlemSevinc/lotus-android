@@ -6,6 +6,7 @@ import 'package:lotus/colors.dart';
 import 'package:lotus/entity/user_entity.dart';
 import 'package:lotus/service/doctor_service.dart';
 import 'package:lotus/service/user_service.dart';
+import 'package:lotus/settings_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'chat_page.dart';
 
@@ -324,10 +325,10 @@ class _ProfileState extends State<Profile> {
               IconButton(
                 icon: const Icon(Icons.settings),
                 onPressed: () {
-                  /*Navigator.push(
+                  Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SettingsPage(userId: currentUserId)),
-                  );*/
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  );
                 },
               ),
           ],

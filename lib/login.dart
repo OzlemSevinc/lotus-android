@@ -31,6 +31,7 @@ class _LoginState extends State<Login> {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       final userId = prefs.getString('userId');
+      await prefs.setBool('isLoggedIn', true);
 
       if(userId != null){
         final userDetails = await userService.getUserById(userId);
