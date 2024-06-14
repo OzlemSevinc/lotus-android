@@ -27,9 +27,10 @@ class ChatService {
     }
   }
 
-  Future<void> sendMessage(String senderId, String recipientId, String text) async {
+  Future<void> sendMessage(String senderId, String recipientId, String text, {bool isDoctor = false}) async {
+    final url = isDoctor ? '$baseUrl/messages/doctor' : '$baseUrl/messages/user';
     final response = await http.post(
-      Uri.parse('$baseUrl/messages/user'),
+      Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -41,7 +42,30 @@ class ChatService {
     );
 
     if (response.statusCode != 201) {
-      throw Exception('Mesaj gönderilemedi');
+      throw Exception(response.body);
+    }
+  }
+
+  Future<void> deleteMessage(int messageId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/messages/message/$messageId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode != 204) {
+      throw Exception('Mesaj silinemedi');
+    }
+  }
+
+  Future<void> deleteConversation(int conversationId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/messages/conversation/$conversationId'),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Sohbet silinemedi');
     }
   }
 }

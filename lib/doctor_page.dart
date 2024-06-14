@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:lotus/colors.dart';
 import 'package:lotus/entity/doctor_entity.dart';
 import 'package:lotus/service/doctor_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'appointment_page.dart';
+import 'chat_page.dart';
 
 class DoctorPage extends StatefulWidget {
   final Doctor doctor;
@@ -14,11 +18,21 @@ class DoctorPage extends StatefulWidget {
 class _DoctorPageState extends State<DoctorPage> {
   List<DoctorCategory> categories = [];
   final DoctorService doctorService = DoctorService(baseUrl: 'https://lotusproject.azurewebsites.net/api/');
+  late String? currentUserId ;
 
   @override
   void initState() {
     super.initState();
     fetchCategories();
+    fetchCurrentUser();
+  }
+
+  Future<void> fetchCurrentUser() async {
+
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+       currentUserId = prefs.getString('userId');
+
   }
 
   Future<void> fetchCategories() async {
@@ -83,6 +97,39 @@ class _DoctorPageState extends State<DoctorPage> {
             Text(
               widget.doctor.information,
               style: const TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                          userId: currentUserId!,
+                          otherUserId: widget.doctor.userId,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: mainPink),
+                  child: const Text("Mesaj Yaz"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AppointmentPage(doctorId: widget.doctor.userId),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: mainPink),
+                  child: const Text("Randevu Al"),
+                ),
+              ],
             ),
           ],
         ),

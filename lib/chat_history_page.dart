@@ -83,6 +83,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
 
                       return Column(
                         children: [
+                          SizedBox(height: 5.0),
                           ListTile(
                             leading: CircleAvatar(
                               radius: 30,
