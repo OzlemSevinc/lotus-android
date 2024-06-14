@@ -70,4 +70,21 @@ class DoctorService {
       throw Exception('Kategoriler yüklenemedi');
     }
   }
+
+  Future<Map<String, dynamic>> getUserAppointments(String userId, String month) async {
+    final response = await http.get(Uri.parse('$baseUrl/appointments/user/$userId?month=$month'));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Randevular yüklenemedi');
+    }
+  }
+  Future<void> cancelAppointment(int appointmentId) async {
+    final response = await http.delete(Uri.parse('$baseUrl/appointments/$appointmentId/cancelAppointment'));
+
+    if (response.statusCode != 204) {
+      throw Exception('Randevu iptal edilemedi');
+    }
+  }
 }

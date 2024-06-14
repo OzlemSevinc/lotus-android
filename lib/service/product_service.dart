@@ -15,6 +15,11 @@ class ProductService {
     int? maxPrice,
     bool? validPriceRange,
     int? categoryId,
+    String? city,
+    bool? sortByDate,
+    bool? sortByDateAscending,
+    bool? sortByPrice,
+    bool? sortByPriceAscending,
     int? pageNumber,
     int? pageSize,
   }) async {
@@ -27,10 +32,13 @@ class ProductService {
       if(maxPrice != null) 'MaxPrice' : maxPrice.toString(),
       if(validPriceRange != null) 'ValidPriceRange' : validPriceRange.toString(),
       if(categoryId != null) 'CategoryId' : categoryId.toString(),
+      if(city != null) 'City' : city.toString(),
+      if (sortByDate != null) 'SortByDate': sortByDate.toString(),
+      if (sortByDateAscending != null) 'SortByDateAscending': sortByDateAscending.toString(),
+      if (sortByPrice != null) 'SortByPrice': sortByPrice.toString(),
+      if (sortByPriceAscending != null) 'SortByPriceAscending': sortByPriceAscending.toString(),
       if(pageNumber != null) 'PageNumber': pageNumber.toString(),
       if(pageSize != null)'PageSize': pageSize.toString(),
-
-
     });
 
     final response = await http.get(url, headers: {
